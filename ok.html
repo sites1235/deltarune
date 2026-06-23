@@ -52,16 +52,16 @@
 
     var origPlay = HTMLMediaElement.prototype.play;
     HTMLMediaElement.prototype.play = function() {
-      this.muted = true;
-      this.volume = 0;
+      this.muted = false;
+      this.volume = 60;
       return origPlay.call(this);
     };
 
     var OrigAudio = window.Audio;
     window.Audio = function() {
       var a = new OrigAudio(...arguments);
-      a.muted = true;
-      a.volume = 0;
+      a.muted = false;
+      a.volume = 60;
       return a;
     };
     window.Audio.prototype = OrigAudio.prototype;
