@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en-us">
+   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PXHK7Q7G3Z"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PXHK7Q7G3Z');
+</script>
+<head>
+<link rel="icon" type="image/x-icon" href="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/1671210/4ae0c6c7805c502bf0bac95df98997ee7d442903.ico">
+    <body oncontextmenu="return false;">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>GM RUNNER</title>
+    <style>
+.output-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    transform: translateY(100%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.output-container.visible {
+    transform: translateY(0);
+}
+
+.output-button {
+    margin: 5px;
+    padding: 8px 15px;
+    width: auto;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    outline-color: #20c20e;
+    outline-style: dashed;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+#output {
+    display: none;
+    height: 200px;
+    background-color: black;
+    color: white;
+    font-family: "Lucida Console", Monaco, monospace;
+    outline: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+}
+
+#message-container {
+    display: none;
+    min-height: 50px;
+    background-color: rgba(20, 20, 20, 0.5);
+    outline: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    position: absolute;
+    top: 0;
+}
+
+#messages {
+    margin-left: 50px;
+    color: white;
+    font-family: "Lucida Console", Monaco, monospace;
+    outline: none;
+    border: none;
+    padding: 0;
+}
+
+#closeUIButton {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1000;
+    display: none;
+    font-size: 35px;
+}
+
+.hidden-ui {
+    display: none !important;
+}
+
+.save-manager-modal {
+    display: none;
+
+    position: fixed;
+
+    z-index: 1001;
+
+    left: 0;
+    top: 0;
+    width: 100%;
+
+    height: 100%;
+
+    overflow: auto;
+
+    background-color: rgba(0, 0, 0, 0.8);
+
+    justify-content: center;
+    align-items: center;
+}
+
+.save-manager-content {
+    background-color: #1a1a1a;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+
+    max-width: 800px;
+
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: white;
+    text-decoration: none;
+}
+
+.minimize-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 11px;
+    right: 46px;
+    cursor: pointer;
+}
+
+.minimize-button:hover,
+.minimize-button:focus {
+    color: white;
+    text-decoration: none;
+}
+
+.save-file-list {
+    max-height: 400px;
+
+    overflow-y: auto;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #0d0d0d;
+}
+
+.save-file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #222;
+}
+
+.save-file-item:last-child {
+    border-bottom: none;
+}
+
+.save-file-info {
+    flex-grow: 1;
+}
+
+.save-file-info span {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.save-file-actions button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #20c20e;
+    color: black;
+    font-weight: bold;
+}
+
+.save-file-actions button.delete-btn {
+    background-color: #FA1E4E;
+}
+
+.file-upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}
+
+.file-upload-section input[type="file"] {
+    background-color: #0d0d0d;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 5px;
+    color: white;
+}
+
+.file-upload-section input[type="text"] {
+    background-color: #0d0d0d;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 5px;
+    color: white;
+}
+
+.file-upload-section button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.custom-message-box {
+    display: none;
+
+    position: fixed;
+
+    z-index: 1002;
+
+    left: 0;
+    top: 0;
+    width: 100%;
+
+    height: 100%;
+
+    overflow: auto;
+
+    background-color: rgba(0, 0, 0, 0.6);
+
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-message-box-content {
+    background-color: #1a1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.custom-message-box-content button {
+    background-color: #20c20e;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+
+</style>
+</head>
+
+<body>
+
+        <div class="output-container" id="output-container">
+            <button class="output-button" id="fullscreen" title="Toggle Fullscreen">Toggle Fullscreen?</button>
+            <button class="output-button" onclick="toggleConsole()" title="Lists emscripten/GM console output and loading progress">Toggle Console!</button>
+            <button class="output-button" id="stats-button" onclick="toggleFPS()" title="Toggles the external FPS Counter">Toggle FPS Counter!</button>
+            <button class="output-button" onclick="window.DeltaruneSaveManager.openSaveManager()" title="Manage your DELTARUNE save files">Save Manager!</button>
+            <button class="output-button" onclick="toggleWASD()" title="Toggles Mirroring Arrow Keys to WASD for easier control">Toggle Arrow & WASD Controls!</button>
+            <input id="colorpicker" type="color" onchange="changecolor(this)" title="Changes Color of the Website's Background">
+            <textarea id="output"></textarea>
+        </div>
+        <button id="closeUIButton" onclick="hideUI()">&times;</button>
+        <div id="message-container">
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <div id="customMessageBox" class="custom-message-box">
+        <div class="custom-message-box-content">
+            <p id="messageBoxText"></p>
+            <button id="messageBoxConfirmBtn">OK</button>
+        </div>
+    </div>
+
+    <div id="saveManagerModal" class="save-manager-modal">
+        <div class="save-manager-content">
+            <span class="close-button" onclick="window.DeltaruneSaveManager.closeSaveManager()">&times;</span>
+            <div class="save-manager-content2">
+                <span class="minimize-button" onclick="window.DeltaruneSaveManager.closeSMnoreload()">&dash;</span>
+                <h2>Save File Manager!</h2>
+                <button class="output-button" onclick="toggleclear_site_cache()">Wipe all of your saves?</button>
+                <button id="exportAllBtn" class="output-button" onclick="DeltaruneSaveManager.exportAllToZip()">Export all saves to ZIP?</button>
+                <h3>Current Save Files:</h3>
+                <div id="saveFileList" class="save-file-list">
+                    <p style="text-align: center; color: #888;">No saves found. Try importing one or saving in-game first.</p>
+                </div>
+                <div class="file-upload-section">
+                    <h3>Import Save Files?</h3>
+                    <input type="file" id="uploadFileInput" accept="*" multiple>
+                        <input type="text" id="uploadFileNameInput" placeholder="Enter the corresponding filename (e.g., filech1_0, dr.ini / for single file only)">
+                            <button onclick="DeltaruneSaveManager.handleUpload()">Select File(s)!</button>
+                        </div>
+            </div>
+        </div>
+        <script>
+            (function(window) {
+                const WASD_CONTROLLER = {
+                    isEnabled: false,
+                    boundHandler: null,
+                    
+                    eventTarget: document.body,
+                    
+                    keyMap: {
+                        'w': {
+                            key: 'ArrowUp',
+                            code: 'ArrowUp',
+                            keyCode: 38
+                        },
+                        'a': {
+                            key: 'ArrowLeft',
+                            code: 'ArrowLeft',
+                            keyCode: 37
+                        },
+                        's': {
+                            key: 'ArrowDown',
+                            code: 'ArrowDown',
+                            keyCode: 40
+                        },
+                        'd': {
+                            key: 'ArrowRight',
+                            code: 'ArrowRight',
+                            keyCode: 39
+                        },
+                        'W': {
+                            key: 'ArrowUp',
+                            code: 'ArrowUp',
+                            keyCode: 38
+                        },
+                        'A': {
+                            key: 'ArrowLeft',
+                            code: 'ArrowLeft',
+                            keyCode: 37
+                        },
+                        'S': {
+                            key: 'ArrowDown',
+                            code: 'ArrowDown',
+                            keyCode: 40
+                        },
+                        'D': {
+                            key: 'ArrowRight',
+                            code: 'ArrowRight',
+                            keyCode: 39
+                        }
+                    },
+                    
+                    handleKeyEvent: function(event) {
+                        if (!this.isEnabled) return;
+                        
+                        const targetNode = event.target.nodeName.toLowerCase();
+                        if (targetNode === 'input' || targetNode === 'textarea' || event.target.isContentEditable) {
+                            return;
+                        }
+                        
+                        const keyData = this.keyMap[event.key];
+                        
+                        if (keyData) {
+                            
+                            event.preventDefault();
+                            event.stopPropagation();
+                            
+                            const arrowKeyEvent = new KeyboardEvent(event.type, {
+                                key: keyData.key,
+                                code: keyData.code,
+                                bubbles: true,
+                                cancelable: true,
+                                composed: true,
+                            });
+                            
+                            Object.defineProperty(arrowKeyEvent, 'keyCode', {
+                                value: keyData.keyCode,
+                                writable: false
+                            });
+                            Object.defineProperty(arrowKeyEvent, 'which', {
+                                value: keyData.keyCode,
+                                writable: false
+                            });
+                            
+                            this.eventTarget.dispatchEvent(arrowKeyEvent);
+                        }
+                    },
+                    
+                    enable: function() {
+                        if (this.isEnabled) return;
+                        this.boundHandler = this.boundHandler || this.handleKeyEvent.bind(this);
+                        
+                        document.addEventListener('keydown', this.boundHandler, true);
+                        document.addEventListener('keyup', this.boundHandler, true);
+                        this.isEnabled = true;
+                        console.log('WASD -> arrow key control has been ENABLED! Target:', this.eventTarget);
+                    },
+                    
+                    disable: function() {
+                        if (!this.isEnabled || !this.boundHandler) return;
+                        document.removeEventListener('keydown', this.boundHandler, true);
+                        document.removeEventListener('keyup', this.boundHandler, true);
+                        this.isEnabled = false;
+                        console.log('WASD -> arrow key control has been DISABLED!');
+                    },
+                    
+                    toggle: function() {
+                        if (this.isEnabled) {
+                            this.disable();
+                        } else {
+                            this.enable();
+                        }
+                    }
+                };
+                
+                window.toggleWASD = WASD_CONTROLLER.toggle.bind(WASD_CONTROLLER);
+                
+            })(window);
+        </script>
+        <script>
+            const konamiCode = ['p', 'i', 'e'];
+            let konamiIndex = 0;
+            
+            function hideUI() {
+                document.getElementById('output-container').classList.remove('visible');
+                document.getElementById('message-container').classList.add('hidden-ui');
+                document.getElementById('closeUIButton').style.display = 'none';
+            }
+            
+            function showUI() {
+                document.getElementById('output-container').classList.add('visible');
+                document.getElementById('message-container').classList.remove('hidden-ui');
+                document.getElementById('closeUIButton').style.display = 'block';
+                ensureAspectRatio();
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === konamiCode[konamiIndex]) {
+                    konamiIndex++;
+                    if (konamiIndex === konamiCode.length) {
+                        showUI();
+                        konamiIndex = 0;
+                    }
+                } else {
+                    konamiIndex = 0;
+                }
+            });
+            window.addEventListener('load', () => {
+                document.getElementById('output-container').classList.remove('visible');
+                document.querySelector('.loading').classList.add('hidden-ui');
+                document.getElementById('message-container').classList.add('hidden-ui');
+                document.getElementById('closeUIButton').style.display = 'none';
+            });
+        </script>
+        
+        <script type="text/javascript">
+            function changecolor(el) {
+                document.body.style.backgroundColor = el.value;
+            }
+            const CHANGE_ASPECT_RATIO = true;
+            var bodyElement = document.getElementsByTagName("body")[0];
+            var statusElement = document.getElementById("status");
+            var progressElement = document.getElementById("progress");
+            var spinnerElement = document.getElementById("spinner");
+            var canvasElement = document.getElementById("canvas");
+            var outputElement = document.getElementById("output");
+            var outputContainerElement = document.getElementById("output-container");
+            const messageContainerElement = document.getElementById("message-container");
+            const messagesElement = document.getElementById("messages");
+            let rollbackMessages = [];
+            const CONSOLE_layer_set_visible = "layer_set_visible() - could not find specified layer in current room";
+            const CONSOLE_layer_tilemap_get_id = "layer_tilemap_get_id() - specified tilemap not found";
+            const CONSOLE_layer_depth = "layer_depth() - can't find specified layer";
+            const CONSOLE_draw_tilemap = "draw_tilemap() - couldn't find specified tilemap";
+            const CONSOLE_layer_get_all_elements = "layer_get_all_elements() - can't find specified layer";
+            let clearRollbackMessagesTimeoutId = -1;
+            const showRollbackMessage = function(message) {
+                let messages = "";
+                rollbackMessages.push(message);
+                rollbackMessages.forEach(m => messages += " < p > " + m + " < /p>");
+                messagesElement.innerHTML = messages;
+                messageContainerElement.style.display = 'block';
+                if (clearRollbackMessagesTimeoutId === -1) {
+                    clearTimeout(clearRollbackMessagesTimeoutId);
+                }
+                clearRollbackMessagesTimeoutId = setTimeout(clearRollbackMessages, 5000);
+            };
+            const clearRollbackMessages = function() {
+                clearRollbackMessagesTimeoutId = -1;
+                rollbackMessages = [];
+                messageContainerElement.style.display = 'none';
+            };
+            var loadprogress = 0;
+            var startingHeight, startingWidth;
+            var startingAspect;
+            var Module = {
+                preRun: [],
+                postRun: [],
+                print: (function() {
+                    var element = document.getElementById("output");
+                    if (element) element.value = "";
+                    return function(text) {
+                        if (text === "Starting WAD") {
+                            loadprogress += 1;
+                        }
+                        if (loadprogress === 1) {
+                            Module.setStatus(text);
+                        } else if (loadprogress >= 2) {
+                            Module.setStatus("");
+                        }
+                        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
+                        if (text != CONSOLE_layer_set_visible && text != CONSOLE_layer_tilemap_get_id && text != CONSOLE_layer_depth && text != CONSOLE_draw_tilemap && text != CONSOLE_layer_get_all_elements) {
+                            console.log(text);
+                        }
+                        if (text === "Entering main loop.") {
+                            ensureAspectRatio();
+                            loadprogress += 1;
+                        }
+                        if (element) {
+                            if (text != CONSOLE_layer_set_visible && text != CONSOLE_layer_tilemap_get_id && text != CONSOLE_layer_depth && text != CONSOLE_draw_tilemap && text != CONSOLE_layer_get_all_elements) {
+                                element.value += text + "\n";
+                            }
+                            element.scrollTop = element.scrollHeight;
+                        }
+                    };
+                })(),
+                printErr: function(text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
+                    console.error(text);
+                },
+                canvas: (function() {
+                    return document.getElementById("canvas");
+                })(),
+                setStatus: function(text) {
+                    if (!Module.setStatus.last) Module.setStatus.last = {
+                        time: Date.now(),
+                        text: ""
+                    };
+                    if (text === Module.setStatus.last.text) return;
+                    var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+                    var now = Date.now();
+                    if (m && now - Module.setStatus.last.time < 30) return;
+                    Module.setStatus.last.time = now;
+                    Module.setStatus.last.text = text;
+                    if (m) {
+                        text = m[1];
+                        progressElement.value = parseInt(m[2]) * 100;
+                        progressElement.max = parseInt(m[4]) * 100;
+                        progressElement.hidden = false;
+                        spinnerElement.hidden = false;
+                    } else {
+                        progressElement.value = null;
+                        progressElement.max = null;
+                        progressElement.hidden = true;
+                        if (!text) {
+                            spinnerElement.style.display = "none";
+                            canvasElement.style.display = "block";
+                        }
+                    }
+                    statusElement.innerHTML = text;
+                },
+                totalDependencies: 0,
+                monitorRunDependencies: function(left) {
+                    this.totalDependencies = Math.max(this.totalDependencies, left);
+                    Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
+                },
+            };
+            Module.setStatus("Downloading...");
+            window.onerror = function(event) {
+                spinnerElement.style.display = "none";
+                Module.setStatus = function(text) {
+                    if (text) Module.printErr("[post-exception status] " + text);
+                };
+            };
+            if (typeof window === "object") {
+                Module['arguments'] = window.location.search.substr(1).trim().split('&');
+                if (!Module['arguments'][0]) {
+                    Module['arguments'] = [];
+                }
+            }
+            
+            function toggleConsole() {
+                var isShown = outputElement.style.display === "flex";
+                if (isShown) {
+                    outputElement.style.display = "none";
+                    outputElement.scrollIntoView(false);
+                } else {
+                    outputElement.style.display = "flex";
+                    outputElement.scrollIntoView(true);
+                }
+            }
+            async function toggleclear_site_cache() {
+                
+                const confirmed = await window.DeltaruneSaveManager.confirmBox("This will clear the site cache. Most importantly, this will ALSO clear ALL OF YOUR SAVES. ONLY do this if you know what you are doing or if the site/game crashes repeatedly. Still wanna continue?");
+                if (confirmed) {
+                    try {
+                        const dbs = await window.indexedDB.databases();
+                        dbs.forEach(db => {
+                            window.indexedDB.deleteDatabase(db.name)
+                        });
+                        window.DeltaruneSaveManager.showMessageBox("All site data has been cleared!\nPlease reload the page for it to take effect.");
+                    } catch (error) {
+                        console.error("Error clearing IndexedDB:", error);
+                        window.DeltaruneSaveManager.showMessageBox("Failed to clear site data. Error: " + error.message);
+                    }
+                }
+            }
+            
+                const DB_NAME = '/_savedata';
+                const STORE_NAME = 'FILE_DATA';
+                const DB_VERSION = 21;
+                let db;
+                async function openIndexedDB() {
+                    if (db) return db;
+                    if (!window.indexedDB) {
+                        showMessageBox("Your browser doesn't support IndexedDB. Save manager will not work.");
+                        throw new Error("IndexedDB not supported.");
+                    }
+                    return new Promise((resolve, reject) => {
+                        const request = indexedDB.open(DB_NAME, DB_VERSION);
+                        request.onerror = (event) => {
+                            console.error("IndexedDB error:", event.target.error);
+                            showMessageBox("Error opening IndexedDB: " + (event.target.error ? event.target.error.message : "Unknown error"));
+                            reject("Error opening IndexedDB.");
+                        };
+                        request.onsuccess = (event) => {
+                            db = event.target.result;
+                            console.log("IndexedDB opened successfully.");
+                            resolve(db);
+                        };
+                        request.onupgradeneeded = (event) => {
+                            db = event.target.result;
+                            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                                db.createObjectStore(STORE_NAME);
+                                console.log(`Object store '${STORE_NAME}' created.`);
+                            }
+                        };
+                    });
+                }
+                async function getSaveFiles() {
+                    try {
+                        await openIndexedDB();
+                        const transaction = db.transaction([STORE_NAME], 'readonly');
+                        const objectStore = transaction.objectStore(STORE_NAME);
+                        const request = objectStore.getAll();
+                        return new Promise((resolve, reject) => {
+                            request.onsuccess = (event) => {
+                                const files = event.target.result;
+                                const fileNamesRequest = objectStore.getAllKeys();
+                                fileNamesRequest.onsuccess = (eventKeys) => {
+                                    const fileNames = eventKeys.target.result;
+                                    const result = files.map((file, index) => ({
+                                        name: fileNames[index],
+                                        data: file
+                                    }));
+                                    resolve(result);
+                                };
+                                fileNamesRequest.onerror = (eventKeys) => {
+                                    console.error("Error getting file names:", eventKeys.target.error);
+                                    reject("Error getting file names: " + (eventKeys.target.error ? eventKeys.target.error.message : "Unknown error"));
+                                };
+                            };
+                            request.onerror = (event) => {
+                                console.error("Error getting save files from object store:", event.target.error);
+                                reject("Error getting save files: " + (event.target.error ? event.target.error.message : "Unknown error"));
+                            };
+                        });
+                    } catch (error) {
+                        console.error("Error in getSaveFiles:", error);
+                        showMessageBox("Failed to retrieve save files: " + error.message);
+                        return [];
+                    }
+                }
+                async function displaySaveFiles() {
+                    const saveFileListDiv = document.getElementById('saveFileList');
+                    saveFileListDiv.innerHTML = '';
+                    try {
+                        const files = await getSaveFiles();
+                        if (files.length === 0) {
+                            saveFileListDiv.innerHTML = 'No saves found. Try importing one or saving in-game first.';
+                            return;
+                        }
+                        files.forEach(fileEntry => {
+                            const fileName = fileEntry.name;
+                            const fileData = fileEntry.data;
+                            const itemDiv = document.createElement('div');
+                            itemDiv.classList.add('save-file-item');
+                            const infoDiv = document.createElement('div');
+                            infoDiv.classList.add('save-file-info');
+                            const timestamp = fileData.timestamp ? new Date(fileData.timestamp).toLocaleString() : 'N/A';
+                            const size = fileData.contents ? fileData.contents.byteLength : 0;
+                            infoDiv.innerHTML = `
+                      
+                          
+                          
+                                      <span>
+                                          <strong>File:</strong> ${fileName}
+                          
+                          
+                                      </span>
+                                      <span>
+                                          <strong>Last Modified:</strong> ${timestamp}
+                          
+                          
+                                      </span>
+                                      <span>
+                                          <strong>Size:</strong> ${size} bytes
+                          
+                          
+                                      </span>
+                    `;
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.classList.add('save-file-actions');
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.textContent = 'Download';
+                    downloadBtn.onclick = () => downloadSaveFile(fileName, fileData.contents);
+                    actionsDiv.appendChild(downloadBtn);
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.classList.add('delete-btn');
+                    deleteBtn.onclick = async () => {
+                        const confirmed = await confirmBox(`Are you sure you want to delete "${fileName}"?`);
+                        if (confirmed) {
+                            await deleteSaveFile(fileName);
+                        }
+                    };
+                    actionsDiv.appendChild(deleteBtn);
+                    itemDiv.appendChild(infoDiv);
+                    itemDiv.appendChild(actionsDiv);
+                    saveFileListDiv.appendChild(itemDiv);
+                        });
+                    } catch (error) {
+                        console.error("Error displaying save files:", error);
+                        saveFileListDiv.innerHTML = `
+                                      
+                                      
+                                      <p style="text-align: center; color: #FA1E4E;">Error loading files: ${error.message}</p>`;
+                    }
+                }
+                
+                function downloadSaveFile(fileName, contents) {
+                    if (!contents) {
+                        showMessageBox("No content to download for this file.");
+                        return;
+                    }
+                    const blob = new Blob([contents], {
+                        type: 'application/octet-stream'
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showMessageBox(`File "${fileName}" downloaded.`);
+                }
+                async function deleteSaveFile(fileName) {
+                    try {
+                        await openIndexedDB();
+                        const transaction = db.transaction([STORE_NAME], 'readwrite');
+                        const objectStore = transaction.objectStore(STORE_NAME);
+                        const request = objectStore.delete(fileName);
+                        return new Promise((resolve, reject) => {
+                            request.onsuccess = () => {
+                                showMessageBox(`File "${fileName}" deleted successfully.`);
+                                displaySaveFiles();
+                                resolve();
+                            };
+                            request.onerror = (event) => {
+                                console.error("Error deleting file:", event.target.error);
+                                showMessageBox(`Error deleting file "${fileName}": ` + (event.target.error ? event.target.error.message : "Unknown error"));
+                                reject("Error deleting file.");
+                            };
+                        });
+                    } catch (error) {
+                        console.error("Error in deleteSaveFile:", error);
+                        showMessageBox("Failed to delete save file: " + error.message);
+                    }
+                }
+                async function handleUpload() {
+                    const uploadFileInput = document.getElementById('uploadFileInput');
+                    const uploadFileNameInput = document.getElementById('uploadFileNameInput');
+                    const files = uploadFileInput.files;
+                    if (files.length === 0) {
+                        showMessageBox("Please select at least one file to upload.");
+                        return;
+                    }
+                    try {
+                        const uploadPromises = [];
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            let fileName = (files.length === 1 && uploadFileNameInput.value.trim())
+                            ? uploadFileNameInput.value.trim()
+                            : file.name;
+                            fileName = fileName.replace(/^_savedata\//, '');
+                            fileName = fileName.replace(/^\//, '');
+                            if (!fileName) {
+                                showMessageBox(`Invalid file name for "${file.name}" after processing. Skipping.`);
+                                continue;
+                            }
+                            const arrayBuffer = await file.arrayBuffer();
+                            const uint8ArrayContents = new Uint8Array(arrayBuffer);
+                            const saveObject = {
+                                timestamp: new Date(),
+                                mode: 33206,
+                                contents: uint8ArrayContents
+                            };
+                            const finalFileName = `/_savedata/${fileName}`;
+                            uploadPromises.push(saveSaveFile(finalFileName, saveObject));
+                        }
+                        await Promise.all(uploadPromises);
+                        showMessageBox(`${files.length} file(s) uploaded and saved successfully.`);
+                        uploadFileInput.value = '';
+                        uploadFileNameInput.value = '';
+                        displaySaveFiles();
+                    } catch (error) {
+                        console.error("Error uploading file(s):", error);
+                        showMessageBox("Failed to upload one or more files: " + error.message);
+                    }
+                }
+                async function exportAllToZip() {
+                    try {
+                        const files = await getSaveFiles();
+                        if (files.length === 0) {
+                            showMessageBox("No save files to export.");
+                            return;
+                        }
+                        const zip = new JSZip();
+                        files.forEach(fileEntry => {
+                            const fileName = fileEntry.name.replace(/^\/_savedata\//, ''); // Clean up name for ZIP
+                            const contents = fileEntry.data.contents;
+                            if (contents) {
+                                const zipContents = (contents instanceof Int8Array)
+                                ? new Uint8Array(contents.buffer)  // Convert if old Int8Array
+                                : contents;  // Already Uint8Array or compatible
+                                zip.file(fileName, zipContents);
+                            }
+                        });
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        const url = URL.createObjectURL(zipBlob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'deltarune_saves.zip';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        showMessageBox("All save files exported to deltarune_saves.zip.");
+                    } catch (error) {
+                        console.error("Error exporting to ZIP:", error);
+                        showMessageBox("Failed to export to ZIP: " + error.message);
+                    }
+                }
+                async function saveSaveFile(fileName, data) {
+                    try {
+                        await openIndexedDB();
+                        const transaction = db.transaction([STORE_NAME], 'readwrite');
+                        const objectStore = transaction.objectStore(STORE_NAME);
+                        const request = objectStore.put(data, fileName);
+                        return new Promise((resolve, reject) => {
+                            request.onsuccess = () => {
+                                resolve();
+                            };
+                            request.onerror = (event) => {
+                                console.error("Error saving file:", event.target.error);
+                                showMessageBox("Error saving file: " + (event.target.error ? event.target.error.message : "Unknown error"));
+                                reject("Error saving file.");
+                            };
+                        });
+                    } catch (error) {
+                        console.error("Error in saveSaveFile:", error);
+                        showMessageBox("Failed to save file: " + error.message);
+                    }
+                }
+                async function openSaveManager() {
+                    const saveManagerModal = document.getElementById('saveManagerModal');
+                    saveManagerModal.style.display = 'flex';
+                    await displaySaveFiles();
+                    GM_pause();
+                }
+                
+                function closeSaveManager() {
+                    window.location.reload();
+                    const saveManagerModal = document.getElementById('saveManagerModal');
+                    saveManagerModal.style.display = 'none';
+                }
+                
+                function closeSMnoreload() {
+                    const saveManagerModal = document.getElementById('saveManagerModal');
+                    saveManagerModal.style.display = 'none';
+                    GM_unpause();
+                }
+                let uploadFileNameInput = null;
+                
+                function protectInputFromGame(e) {
+                    if (uploadFileNameInput && document.activeElement === uploadFileNameInput) {
+                        e.stopImmediatePropagation();
+                    }
+                }
+                document.addEventListener('DOMContentLoaded', () => {
+                    uploadFileNameInput = document.getElementById('uploadFileNameInput');
+                    const uploadFileInput = document.getElementById('uploadFileInput');
+                    
+                    if (uploadFileInput && uploadFileNameInput) {
+                        if (uploadFileInput && uploadFileNameInput) {
+                            uploadFileInput.addEventListener('change', () => {
+                                if (uploadFileInput.files.length === 1) {
+                                    uploadFileNameInput.disabled = false;
+                                    uploadFileNameInput.value = uploadFileInput.files[0].name;
+                                    uploadFileNameInput.placeholder = 'Enter the corresponding filename (e.g., filech1_0, dr.ini / for single file only)';
+                                } else {
+                                    uploadFileNameInput.disabled = true;
+                                    uploadFileNameInput.value = '';
+                                    uploadFileNameInput.placeholder = 'Custom filenames do not work when selecting multiple files!';
+                                }
+                            });
+                        }
+                    }
+                    if (uploadFileNameInput) {
+                        window.addEventListener('keydown', protectInputFromGame, true);
+                        window.addEventListener('keyup', protectInputFromGame, true);
+                        window.addEventListener('keypress', protectInputFromGame, true);
+                    }
+                });
+                return {
+                    openSaveManager: openSaveManager,
+                    closeSaveManager: closeSaveManager,
+                    closeSMnoreload: closeSMnoreload,
+                    handleUpload: handleUpload,
+                    showMessageBox: showMessageBox,
+                    confirmBox: confirmBox,
+                    openIndexedDB: openIndexedDB,
+                    exportAllToZip: exportAllToZip
+                };
+            })();
+            window.addEventListener('load', async () => {
+                try {
+                    await window.DeltaruneSaveManager.openIndexedDB();
+                } catch (error) {
+                    console.error("Failed to initialize IndexedDB on load:", error);
+                }
+            });
+        </script>
+        
+</body>
+
+</html>
