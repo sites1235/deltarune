@@ -36,11 +36,11 @@
             right: 0px;
             cursor: pointer;
             background: rgba(30, 30, 30, 0.8);
-            border: 1px solid #444;
-            padding: 8px 16px;
-            border-radius: 4px;
+            border: 0px solid #444;
+            padding: 0px 0px;
+            border-radius: 0px;
             z-index: 20;
-            font-size: 14px;
+            font-size: 0px;
             transition: background 0.2s;
         }
 
@@ -83,7 +83,7 @@
                 const x = await fetchWithRetry(url);
                 const a = await x.arrayBuffer();
                 n++;
-                up(n / t, "Loading assets");
+                up(n / t, "");
                 return a;
             }));
             return new Blob(r).arrayBuffer();
@@ -114,7 +114,7 @@
             shim();
             u = UnityLoader.instantiate("u", base + "Build/tabs.json", {
                 onProgress: (inst, v) => {
-                    if (v < 1) up(v, "Initializing");
+                    if (v < 1) up(v, "");
                     else document.getElementById('l').style.display = 'none';
                 }
             });
